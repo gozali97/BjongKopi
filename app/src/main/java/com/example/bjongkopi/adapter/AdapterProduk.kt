@@ -23,7 +23,7 @@ import java.text.NumberFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class AdapterProduk(var activity: Activity, var data: ArrayList<Produk>) : RecyclerView.Adapter<AdapterProduk.Holder>() {
+class AdapterProduk(var activity: Activity, var data: List<Produk>) : RecyclerView.Adapter<AdapterProduk.Holder>() {
 
     class Holder(view: View) : RecyclerView.ViewHolder(view) {
         val tvNama = view.findViewById<TextView>(R.id.tv_nama)

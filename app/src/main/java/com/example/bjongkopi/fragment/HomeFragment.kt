@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
@@ -31,47 +32,66 @@ class HomeFragment : Fragment() {
     ): View? {
 
         val view: View = inflater.inflate(R.layout.fragment_home, container, false)
-        init(view)
-        getProduk()
 
         return view
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        init(view)
+        getProduk()
+    }
+
     fun displayProduk() {
-
-        val layoutManager = LinearLayoutManager(activity)
-        layoutManager.orientation = LinearLayoutManager.HORIZONTAL
-
-        val layoutManager2 = LinearLayoutManager(activity)
-        layoutManager2.orientation = LinearLayoutManager.HORIZONTAL
-
+        Log.d("listdisplay", "display")
 
         rvProduk.adapter = AdapterProduk(requireActivity(), listProduk)
-        rvProduk.layoutManager = layoutManager
 
         rvProdukTerlasir.adapter = AdapterProduk(requireActivity(), listProduk)
-        rvProdukTerlasir.layoutManager = layoutManager2
 
     }
 
-    private var listProduk: ArrayList<Produk> = ArrayList()
+    private var listProduk: List<Produk> = listOf()
     fun getProduk() {
-        ApiConfig.instanceRetrofit.getProduk().enqueue(object : Callback<ResponModel> {
-            override fun onFailure(call: Call<ResponModel>, t: Throwable) {
+        Log.d("listproduk", "failedss")
+        ApiConfig.instanceRetrofit.getProduk().enqueue(object : Callback<List<Produk>> {
+            override fun onFailure(call: Call<List<Produk>>, t: Throwable) {
+                Log.d("listproduk", "failed" + t.message)
             }
 
-            override fun onResponse(call: Call<ResponModel>, response: Response<ResponModel>) {
+            override fun onResponse(call: Call<List<Produk>>, response: Response<List<Produk>>) {
+                Log.d("listproduk", "produk" + response)
                 val res = response.body()!!
-                if (res.success == 1) {
-                    listProduk = res.produks
-                    displayProduk()
-                }
+//                res.forEach {
+//                    if (res.success == 1) {
+                        listProduk = res
+                    Log.d("listproduk", "produk" + res)
+
+                        displayProduk()
+//                    }else{
+//                    Log.d("gagal", "gagal boss")
+//                }
+//                }
             }
         })
     }
 
     fun init(view: View) {
+        Log.d("listInit", "inittttt")
         rvProduk = view.findViewById(R.id.rv_produk)
         rvProdukTerlasir = view.findViewById(R.id.rv_produkTerlasir)
+
+//        rvProduk.setHasFixedSize(true)
+        val layoutManager = GridLayoutManager(activity, 2)
+        layoutManager.orientation = GridLayoutManager.HORIZONTAL
+
+        val layoutManager2 = LinearLayoutManager(activity)
+        layoutManager2.orientation = LinearLayoutManager.HORIZONTAL
+
+//        rvProduk.adapter = AdapterProduk(requireActivity(), listProduk)
+        rvProduk.layoutManager = layoutManager
+
+//        rvProdukTerlasir.adapter = AdapterProduk(requireActivity(), listProduk)
+        rvProdukTerlasir.layoutManager = layoutManager2
     }
 }
